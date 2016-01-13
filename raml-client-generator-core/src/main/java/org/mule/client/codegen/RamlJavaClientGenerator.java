@@ -62,6 +62,7 @@ public class RamlJavaClientGenerator {
     private String basePackage;
     private File targetFolder;
     private RestClientGenerator clientGenerator;
+    private GenerationConfig generationConfig;
 
     //This two properties hold state so maybe should be local and pass through
     private Map<String, Pair<JDefinedClass, JMethod>> resourceClasses;
@@ -436,7 +437,11 @@ public class RamlJavaClientGenerator {
 
 
     private RuleFactory getRuleFactory() {
-        return new RuleFactory(new JsonSchemaGeneratorConfiguration(), new Jackson2Annotator(), new SchemaStore());
+        if (this.generationConfig == null) {
+            this.generationConfig = new JsonSchemaGeneratorConfiguration();
+        }
+
+        return new RuleFactory(this.generationConfig, new Jackson2Annotator(), new SchemaStore());
     }
 
 
@@ -456,5 +461,9 @@ public class RamlJavaClientGenerator {
         public boolean isGenerateBuilders() {
             return true;
         }
+    }
+
+    public void setGenerationConfig(GenerationConfig generationConfig) {
+        this.generationConfig = generationConfig;
     }
 }
